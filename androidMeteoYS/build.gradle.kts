@@ -45,4 +45,22 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.compose.ui.tooling)
+
+    //Location
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+
+    //Covert API
+    implementation("com.google.code.gson:2.10.1")
+    implementation("com.squareup.retrofit2:retrofit:2:9.0")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //Laoding Network Image
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    //Display Awesome Font
+    implementation("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
+    //Full layout without status bar
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.33.1-alpha")
+
+
 }
