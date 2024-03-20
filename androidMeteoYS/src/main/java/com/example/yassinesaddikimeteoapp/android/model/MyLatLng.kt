@@ -1,3 +1,3 @@
 package com.example.yassinesaddikimeteoapp.android.model
 
-data class MyLatLng(val lat: Double, val lng: Double)
+data class MyLatLng(val Mlat: Double, val lng: Double)
