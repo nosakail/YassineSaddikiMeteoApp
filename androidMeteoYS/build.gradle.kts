@@ -58,7 +58,7 @@ dependencies {
     //Laoding Network Image
     implementation("io.coil-kt:coil-compose:2.4.0")
     //Display Awesome Font
-    implementation("com.github.Gurupreet:FontAwesomeCompose:1.1.0")
+    //implementation("com.github.Gurupreet:FontAwesomeCompose:1.1.0")
     //Full layout without status bar
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.33.1-alpha")
 
