@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 class MainActivity : ComponentActivity() {
@@ -106,7 +107,7 @@ fun ButtonValider(onClick: () -> Unit) {
         Text(
             text = "VALIDER",
             color = Color.White,
-            style = TextStyle(fontWeight = FontWeight.Bold),
+            style = TextStyle(fontWeight = FontWeight.Bold,  fontSize = 12.sp),
         )
     }
 }
