@@ -1,4 +1,4 @@
-package com.example.yassinesaddikimeteoapp.android
+package com.example.yassinesaddikimeteoapp.android.ui.theme
 
 
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.yassinesaddikimeteoapp.android.MyApplicationTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -68,49 +70,70 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Text(
             text = name,
             modifier = modifier,
-            style = MaterialTheme.typography.bodyLarge
+            style = TextStyle(
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold
+            )
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputField(
     text: String,
     onValueChange: (String) -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(end = 16.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Search,
+            contentDescription = "Search",
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .size(24.dp)
+        )
         OutlinedTextField(
             value = text,
             onValueChange = onValueChange,
             label = { Text("Chercher une ville...") },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.weight(1f) // Pour étirer le champ de texte pour prendre tout l'espace disponible
-        )
-        Icon(
-            imageVector = Icons.Filled.Search,
-            contentDescription = "Search"
+            shape = RoundedCornerShape(20.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color(0xFFD9D9D9), // Définir la couleur de fond de l'input
+                cursorColor = Color.Black, // Définir la couleur du curseur
+                focusedBorderColor = Color.Black, // Définir la couleur du contour lorsqu'il est sélectionné
+                unfocusedBorderColor = Color.Black // Définir la couleur du contour lorsqu'il n'est pas sélectionné
+            ),
+            textStyle = TextStyle(fontSize = 16.sp) // Définir la taille de la police du texte
         )
     }
-    ButtonValider(onClick = { /*TODO*/ })
 }
+
 
 @Composable
 fun ButtonValider(onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.padding(start = 8.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF55ABFA)
-        ),
+    Box(
+        modifier = Modifier.padding(top = 16.dp)
     ) {
-        Text(
-            text = "VALIDER",
-            color = Color.White,
-            style = TextStyle(fontWeight = FontWeight.Bold,  fontSize = 12.sp),
-        )
+        Button(
+            onClick = onClick,
+            modifier = Modifier.padding(start = 8.dp).size(150.dp, 50.dp), // Modification de la taille du bouton
+            shape = RoundedCornerShape(20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF55ABFA)
+            ),
+        ) {
+            Text(
+                text = "VALIDER",
+                color = Color.White,
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+            )
+        }
     }
 }
+
 
 
 
