@@ -44,7 +44,29 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.compose.material)
     debugImplementation(libs.compose.ui.tooling)
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.3")
+
+
+    // Location Services
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+
+    implementation(libs.androidx.appcompat)
+
+
+
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("org.jsoup:jsoup:1.14.3")
+
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+
+
+
 }
