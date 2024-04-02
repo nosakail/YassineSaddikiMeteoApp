@@ -21,6 +21,9 @@ import java.io.IOException
 
 class LocalMeteoActivity : AppCompatActivity() {
 
+    val latitude = intent.getDoubleExtra("latitude", 0.0)
+    val longitude = intent.getDoubleExtra("longitude", 0.0)
+
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://api.meteomatics.com/")
         .client(createClient())
@@ -99,7 +102,7 @@ class LocalMeteoActivity : AppCompatActivity() {
     }
 
     interface WeatherApiService {
-        @GET("2024-04-01T00:00:00Z/t_2m:C,t_min_2m_24h:C,t_max_2m_24h:C,wind_gusts_10m_24h:ms,weather_symbol_24h:idx,uv:idx/52.520551,13.461804/json")
+        @GET("2024-04-01T00:00:00Z/t_2m:C,t_min_2m_24h:C,t_max_2m_24h:C,wind_gusts_10m_24h:ms,weather_symbol_24h:idx,uv:idx/latitude,longitude/json")
         fun getWeatherData(): Call<ResponseBody>
     }
 
