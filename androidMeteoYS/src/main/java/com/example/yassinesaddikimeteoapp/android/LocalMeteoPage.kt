@@ -16,6 +16,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.GET
+import retrofit2.http.Path
 import java.io.IOException
 
 
@@ -33,6 +34,8 @@ class LocalMeteoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         setContent {
             var currentTemperature by remember { mutableStateOf<Double?>(null) }
@@ -74,7 +77,8 @@ class LocalMeteoActivity : AppCompatActivity() {
     private suspend fun fetchWeatherData(): JSONObject? {
         return withContext(Dispatchers.IO) {
             try {
-                val response = service.getWeatherData().execute()
+                val service = retrofit.create(WeatherApiService::class.java)
+                val response = service.getWeatherData(latitude, longitude).execute()
                 if (response.isSuccessful) {
                     JSONObject(response.body()?.string() ?: "{}")
                 } else {
@@ -102,8 +106,8 @@ class LocalMeteoActivity : AppCompatActivity() {
     }
 
     interface WeatherApiService {
-        @GET("2024-04-01T00:00:00Z/t_2m:C,t_min_2m_24h:C,t_max_2m_24h:C,wind_gusts_10m_24h:ms,weather_symbol_24h:idx,uv:idx/latitude,longitude/json")
-        fun getWeatherData(): Call<ResponseBody>
+        @GET("{latitude},{longitude}/t_2m:C,t_min_2m_24h:C,t_max_2m_24h:C,wind_gusts_10m_24h:ms,weather_symbol_24h:idx,uv:idx/2024-04-01T00:00:00Z/json")
+        fun getWeatherData(@Path("latitude") latitude: Double, @Path("longitude") longitude: Double): Call<ResponseBody>
     }
 
     private fun createClient(): OkHttpClient {

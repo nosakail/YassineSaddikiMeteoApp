@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -79,21 +80,23 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun HandleButtonClick(inputText: String, scope: CoroutineScope) {
+        val context = LocalContext.current
         ButtonValider(onClick = {
             if (inputText.isNotEmpty()) {
                 scope.launch {
                     val coordinates = fetchCoordinates(inputText)
                     coordinates?.let { (latitude, longitude) ->
-                        val intent = Intent(this@MainActivity, LocalMeteoActivity::class.java)
-                        // Add latitude and longitude to the intent
+                        val intent = Intent(context, LocalMeteoActivity::class.java)
+                        
                         intent.putExtra("latitude", latitude)
                         intent.putExtra("longitude", longitude)
-                        startActivity(intent)
+                        context.startActivity(intent)
                     }
                 }
             }
         })
     }
+
 
 //-------------------------------------------
 
@@ -128,6 +131,8 @@ class MainActivity : ComponentActivity() {
         }
         return null
     }
+
+
 
 
     //-------------------------------------------
