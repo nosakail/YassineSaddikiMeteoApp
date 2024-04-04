@@ -21,9 +21,9 @@ import java.io.IOException
 
 
 class LocalMeteoActivity : AppCompatActivity() {
-
     val latitude = intent.getDoubleExtra("latitude", 0.0)
     val longitude = intent.getDoubleExtra("longitude", 0.0)
+
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://api.meteomatics.com/")
@@ -34,6 +34,7 @@ class LocalMeteoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
 
 
