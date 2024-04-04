@@ -8,19 +8,20 @@
 
 
     <application
-        android:allowBackup="false"
+        android:name=".WeatherApp"
+        android:allowBackup="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.ComposeMVVMWeatherApp">>
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.ComposeMVVMWeatherApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LocalMeteoActivity"
-                  android:theme="@style/AppTheme"/>
-
     </application>
+
 </manifest> 
