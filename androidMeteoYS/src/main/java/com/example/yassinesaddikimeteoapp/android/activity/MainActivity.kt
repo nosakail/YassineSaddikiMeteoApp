@@ -10,14 +10,25 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -32,16 +43,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.compose_mvvm_weather_app.model.WeatherUiModel
-import com.example.compose_mvvm_weather_app.ui.theme.*
-import com.example.compose_mvvm_weather_app.utils.capitalize
-import com.example.compose_mvvm_weather_app.utils.getWeatherIcon
-import com.example.compose_mvvm_weather_app.utils.todayDate
-import com.example.compose_mvvm_weather_app.viewmodel.MainViewModel
 import com.example.yassinesaddikimeteoapp.android.R
-import dagger.hilt.android.AndroidEntryPoint
+import com.example.yassinesaddikimeteoapp.android.model.WeatherUiModel
+import com.example.yassinesaddikimeteoapp.android.ui.theme.ComposeMVVMWeatherAppTheme
+import com.example.yassinesaddikimeteoapp.android.utils.capitalize
+import com.example.yassinesaddikimeteoapp.android.utils.getWeatherIcon
+import com.example.yassinesaddikimeteoapp.android.utils.todayDate
+import com.example.yassinesaddikimeteoapp.android.viewmodel.MainViewModel
 
-@AndroidEntryPoint
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +62,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
 }
 
 @Composable
 fun CurrentWeatherHeader(mainViewModel: MainViewModel = viewModel()) {
-    Column(modifier = Modifier.background(backgroundColor)) {
+    Column{
         when (val state = mainViewModel.uiState.collectAsState().value) {
             is MainViewModel.WeatherUiState.Empty -> Text(
                 text = stringResource(R.string.no_data_available),
@@ -70,8 +83,9 @@ fun CurrentWeatherHeader(mainViewModel: MainViewModel = viewModel()) {
                 WeatherLoadingAnimation()
             }
 
-            is MainViewModel.WeatherUiState.Error -> ErrorDialog(state.message)
+
             is MainViewModel.WeatherUiState.Loaded -> WeatherLoadedScreen(state.data)
+            else -> {}
         }
     }
 }
@@ -83,12 +97,12 @@ fun WeatherLoadedScreen(data: WeatherUiModel) {
     Text(
         text = data.city,
         modifier = Modifier.padding(start = 20.dp),
-        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp, color = textColor)
+        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
     )
     Text(
         text = todayDate(),
         modifier = Modifier.padding(start = 20.dp),
-        style = TextStyle(fontSize = 16.sp, color = textColor)
+        style = TextStyle(fontSize = 16.sp)
     )
     Row(
         modifier = Modifier
@@ -98,9 +112,9 @@ fun WeatherLoadedScreen(data: WeatherUiModel) {
     ) {
         Card(
             modifier = Modifier.size(80.dp).align(Alignment.CenterVertically),
-            backgroundColor = weeklyItemBackgroundColor,
+            //backgroundColor = weeklyItemBackgroundColor,
             shape = RoundedCornerShape(40.dp),
-            elevation = 0.dp,
+            //elevation = 0.dp,
         ) {
             GlideImage(
                 modifier = Modifier
@@ -115,14 +129,14 @@ fun WeatherLoadedScreen(data: WeatherUiModel) {
             text = data.weather,
             modifier = Modifier.padding(start = 10.dp),
             style = TextStyle(
-                fontWeight = FontWeight.Bold, fontSize = 70.sp, color = textColor
+                fontWeight = FontWeight.Bold, fontSize = 70.sp
             )
         )
         Text(
             text = "°C",
             modifier = Modifier.padding(top = 20.dp),
             style = TextStyle(
-                fontWeight = FontWeight.Bold, fontSize = 22.sp, color = textColor
+                fontWeight = FontWeight.Bold, fontSize = 22.sp
             )
         )
         Text(
@@ -131,7 +145,7 @@ fun WeatherLoadedScreen(data: WeatherUiModel) {
                 .padding(start = 20.dp)
                 .align(Alignment.CenterVertically),
             style = TextStyle(
-                fontWeight = FontWeight.Bold, fontSize = 25.sp, color = textColor,
+                fontWeight = FontWeight.Bold, fontSize = 25.sp
             )
         )
     }
@@ -178,12 +192,12 @@ fun WeatherLoadedScreen(data: WeatherUiModel) {
             Column {
                 Card(
                     modifier = Modifier
-                        .background(backgroundColor)
+
                         .height(60.dp)
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(CornerSize(15.dp)),
-                    elevation = 0.dp,
-                    backgroundColor = weeklyItemBackgroundColor
+
+
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -196,7 +210,7 @@ fun WeatherLoadedScreen(data: WeatherUiModel) {
                                 textAlign = TextAlign.Start,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 16.sp,
-                                color = textColor
+
                             ),
                             modifier = Modifier
                                 .weight(1f)
@@ -219,12 +233,12 @@ fun WeatherLoadedScreen(data: WeatherUiModel) {
                         ) {
                             Text(
                                 text = card.dayTemp,
-                                style = TextStyle(fontSize = 14.sp, color = textColor),
+                                style = TextStyle(fontSize = 14.sp),
                             )
 
                             Text(
                                 text = card.nightTemp,
-                                style = TextStyle(fontSize = 14.sp, color = textColor),
+                                style = TextStyle(fontSize = 14.sp),
                                 modifier = Modifier.padding(start = 20.dp) // Added some padding for separation
                             )
                         }
@@ -240,9 +254,8 @@ fun WeatherLoadedScreen(data: WeatherUiModel) {
 fun DailyItem(icDay: Int, data: String, stringText: String) {
     Card(
         modifier = Modifier.size(100.dp),
-        backgroundColor = weeklyItemBackgroundColor,
         shape = RoundedCornerShape(15.dp),
-        elevation = 0.dp
+
     ) {
         Column(verticalArrangement = Arrangement.Center) {
             Icon(
@@ -255,7 +268,7 @@ fun DailyItem(icDay: Int, data: String, stringText: String) {
             Spacer(modifier = Modifier.size(5.dp))
             Text(
                 text = data,
-                style = TextStyle(fontSize = 16.sp, color = textColor),
+                style = TextStyle(fontSize = 16.sp),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(bottom = 5.dp)
@@ -263,28 +276,14 @@ fun DailyItem(icDay: Int, data: String, stringText: String) {
 
             Text(
                 text = stringText,
-                style = TextStyle(fontSize = 14.sp, color = textColor),
+                style = TextStyle(fontSize = 14.sp),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }
 }
 
-@Composable
-fun ErrorDialog(message: String) {
-    val openDialog = remember { mutableStateOf(true) }
-    if (openDialog.value) {
-        AlertDialog(onDismissRequest = {
-            openDialog.value = false
-        }, title = {
-            Text(text = stringResource(R.string.problem_occurred))
-        }, text = {
-            Text(message)
-        }, confirmButton = {
-            openDialog.value = false
-        })
-    }
-}
+
 
 @Composable
 fun WeatherLoadingAnimation() {

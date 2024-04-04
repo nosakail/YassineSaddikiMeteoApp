@@ -6,15 +6,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.compose_mvvm_weather_app.R
-import com.example.compose_mvvm_weather_app.model.TodayWeatherIcon
-import com.example.compose_mvvm_weather_app.model.WeatherForWeekItem
-import com.example.compose_mvvm_weather_app.model.WeatherUiModel
-import com.example.compose_mvvm_weather_app.model.WeeklyWeatherIcon
-import com.example.compose_mvvm_weather_app.repository.WeatherRepository
-import com.example.compose_mvvm_weather_app.utils.*
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.example.yassinesaddikimeteoapp.android.R
+import com.example.yassinesaddikimeteoapp.android.model.TodayWeatherIcon
+import com.example.yassinesaddikimeteoapp.android.model.WeatherForWeekItem
+import com.example.yassinesaddikimeteoapp.android.model.WeatherUiModel
+import com.example.yassinesaddikimeteoapp.android.model.WeeklyWeatherIcon
+import com.example.yassinesaddikimeteoapp.android.repository.WeatherRepository
+import com.example.yassinesaddikimeteoapp.android.utils.fahrenheitToCelsius
+import com.example.yassinesaddikimeteoapp.android.utils.metersToKilometers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +22,7 @@ import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
 
-@HiltViewModel
+
 @SuppressLint("StaticFieldLeak")
 class MainViewModel @Inject constructor(
     private val repository: WeatherRepository,
@@ -108,6 +107,8 @@ class MainViewModel @Inject constructor(
         class Loaded(val data: WeatherUiModel) : WeatherUiState()
         class Error(val message: String) : WeatherUiState()
     }
+
+    annotation class ApplicationContext
 
     companion object {
         const val ISLAMABAD_LAT = "33.720001"

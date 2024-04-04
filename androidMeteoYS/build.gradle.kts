@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
 }
 
+
 android {
     namespace = "com.example.yassinesaddikimeteoapp.android"
     compileSdk = 34
@@ -46,6 +47,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.material)
+    implementation(libs.transport.runtime)
     debugImplementation(libs.compose.ui.tooling)
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.3")
@@ -70,6 +72,7 @@ dependencies {
 
 
 
+
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
 
 
@@ -85,7 +88,7 @@ dependencies {
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation ("androidx.compose.ui:ui-test-junit4:2.7.7")
-    debugImplementation ("androidx.compose.ui:ui-tooling:2.7.7")
+
 
 
 
