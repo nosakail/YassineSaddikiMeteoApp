@@ -106,14 +106,14 @@ class LocalMeteoActivity : AppCompatActivity() {
     }
 
     interface WeatherApiService {
-        @GET("{latitude},{longitude}/t_2m:C,t_min_2m_24h:C,t_max_2m_24h:C,wind_gusts_10m_24h:ms,weather_symbol_24h:idx,uv:idx/2024-04-01T00:00:00Z/json")
+        @GET("2024-04-05T00:00:00Z/t_2m:C,t_min_2m_24h:C,t_max_2m_24h:C,wind_gusts_10m_24h:ms,weather_symbol_24h:idx,uv:idx/{latitude},{13.461804}/json")
         fun getWeatherData(@Path("latitude") latitude: Double, @Path("longitude") longitude: Double): Call<ResponseBody>
     }
 
     private fun createClient(): OkHttpClient {
         val interceptor = Interceptor { chain ->
             val request = chain.request().newBuilder()
-                .header("Authorization", Credentials.basic("nknkj_etre_kjnk", "jYY3dcT77O"))
+                .header("Authorization", Credentials.basic("iut_mesri_mohamed", "8A7gpU8H2i"))
                 .build()
             chain.proceed(request)
         }
