@@ -1,8 +1,14 @@
 package com.example.yassinesaddikimeteoapp.android
 
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -49,6 +55,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +65,6 @@ import okhttp3.Request
 import org.json.JSONArray
 import java.text.SimpleDateFormat
 import java.util.Date
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +84,7 @@ class MainActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Greeting("Bienvenue")
+                        ButtonMeteoLocal(context = LocalContext.current)
                         InputField(
                             text = inputText,
                             onValueChange = { inputText = it }
@@ -325,6 +332,112 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+            }
+        }
+    }
+
+    //-------------------------------------------------------------------------------------//
+
+    companion object {
+        private const val PERMISSION_REQUEST_LOCATION = 1001
+    }
+    interface LocationCallback {
+        fun onLocationReceived(location: Pair<Double, Double>?)
+    }
+
+    private fun getUserLocation(callback: LocationCallback) {
+
+        var locationManager: LocationManager
+
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+
+        if (ActivityCompat.checkSelfPermission(
+                this@MainActivity,
+                ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this@MainActivity,
+                ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this@MainActivity,
+                arrayOf(
+                    ACCESS_FINE_LOCATION,
+                    ACCESS_COARSE_LOCATION
+                ),
+                PERMISSION_REQUEST_LOCATION
+            )
+        } else {
+            locationManager.requestSingleUpdate(
+                LocationManager.GPS_PROVIDER,
+                object : LocationListener {
+                    override fun onLocationChanged(locationResult: Location) {
+                        val latitude = locationResult.latitude
+                        val longitude = locationResult.longitude
+                        callback.onLocationReceived(Pair(latitude, longitude))
+                    }
+
+                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+
+                    override fun onProviderEnabled(provider: String) {}
+
+                    override fun onProviderDisabled(provider: String) {}
+                },
+                null
+            )
+        }
+    }
+
+
+
+    //__________________________________________________________________________________
+
+
+
+
+
+@Composable
+    fun ButtonMeteoLocal(context: Context) {
+        Box(
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Button(
+                onClick = {
+                    getUserLocation(object : LocationCallback {
+                        override fun onLocationReceived(location: Pair<Double, Double>?) {
+                            location?.let { (latitude, longitude) ->
+                                val date = Date()
+                                val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                                val formattedDate = dateFormat.format(date)
+
+                                val intent = Intent(context, LocalMeteoPage::class.java)
+                                intent.putExtra("latitude", latitude)
+                                intent.putExtra("longitude", longitude)
+                                intent.putExtra("date", formattedDate)
+
+                                context.startActivity(intent)
+                            } ?: run {
+                                Toast.makeText(
+                                    context,
+                                    "Votre localisation est introuvable",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    })
+                },
+                modifier = Modifier.padding(start = 8.dp)
+                    .size(150.dp, 50.dp), // Modification de la taille du bouton
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF55ABFA)
+                ),
+            ) {
+                Text(
+                    text = "Meteo chez moi",
+                    color = Color.White,
+                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+                )
             }
         }
     }
