@@ -1,8 +1,8 @@
 package com.example.yassinesaddikimeteoapp.android
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -19,11 +19,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import java.io.IOException
 
-
-class LocalMeteoActivity : AppCompatActivity() {
-
-    val latitude = intent.getDoubleExtra("latitude", 0.0)
-    val longitude = intent.getDoubleExtra("longitude", 0.0)
+class LocalMeteoPage : ComponentActivity() {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://api.meteomatics.com/")
@@ -35,8 +31,6 @@ class LocalMeteoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         setContent {
             var currentTemperature by remember { mutableStateOf<Double?>(null) }
             var minTemperature by remember { mutableStateOf<Double?>(null) }
@@ -46,13 +40,19 @@ class LocalMeteoActivity : AppCompatActivity() {
             var uvIndex by remember { mutableStateOf<Int?>(null) }
 
             LaunchedEffect(true) {
-                fetchWeatherData()?.let { data ->
-                    currentTemperature = extractValue(data, "t_2m:C")
-                    minTemperature = extractValue(data, "t_min_2m_24h:C")
-                    maxTemperature = extractValue(data, "t_max_2m_24h:C")
-                    windSpeed = extractValue(data, "wind_gusts_10m_24h:ms")
-                    weatherSymbol = extractValue(data, "weather_symbol_24h:idx")?.toInt()
-                    uvIndex = extractValue(data, "uv:idx")?.toInt()
+                val date = intent.getStringExtra("date")
+                val latitude = intent.getDoubleExtra("latitude", 0.0)
+                val longitude = intent.getDoubleExtra("longitude", 0.0)
+
+                if (date != null) {
+                    fetchWeatherData(date, latitude, longitude)?.let { data ->
+                        currentTemperature = extractValue(data, "t_2m:C")
+                        minTemperature = extractValue(data, "t_min_2m_24h:C")
+                        maxTemperature = extractValue(data, "t_max_2m_24h:C")
+                        windSpeed = extractValue(data, "wind_gusts_10m_24h:ms")
+                        weatherSymbol = extractValue(data, "weather_symbol_24h:idx")?.toInt()
+                        uvIndex = extractValue(data, "uv:idx")?.toInt()
+                    }
                 }
             }
 
@@ -61,6 +61,12 @@ class LocalMeteoActivity : AppCompatActivity() {
                     modifier = androidx.compose.ui.Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
+                    val intent = intent
+                    val latitude = intent.getDoubleExtra("latitude", 0.0)
+                    val longitude = intent.getDoubleExtra("longitude", 0.0)
+                    val date = intent.getStringExtra("date")
+
                     Column {
                         currentTemperature?.let { Text(text = "Température actuelle: $it°C") }
                         minTemperature?.let { Text(text = "Température minimale: $it°C") }
@@ -74,11 +80,10 @@ class LocalMeteoActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun fetchWeatherData(): JSONObject? {
+    private suspend fun fetchWeatherData(date: String, latitude: Double, longitude: Double): JSONObject? {
         return withContext(Dispatchers.IO) {
             try {
-                val service = retrofit.create(WeatherApiService::class.java)
-                val response = service.getWeatherData(latitude, longitude).execute()
+                val response = service.getWeatherData(date, latitude, longitude).execute()
                 if (response.isSuccessful) {
                     JSONObject(response.body()?.string() ?: "{}")
                 } else {
@@ -89,6 +94,7 @@ class LocalMeteoActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun extractValue(data: JSONObject, parameter: String): Double? {
         val dataArray = data.getJSONArray("data")
@@ -106,9 +112,14 @@ class LocalMeteoActivity : AppCompatActivity() {
     }
 
     interface WeatherApiService {
-        @GET("2024-04-05T00:00:00Z/t_2m:C,t_min_2m_24h:C,t_max_2m_24h:C,wind_gusts_10m_24h:ms,weather_symbol_24h:idx,uv:idx/{latitude},{13.461804}/json")
-        fun getWeatherData(@Path("latitude") latitude: Double, @Path("longitude") longitude: Double): Call<ResponseBody>
+        @GET("{date}T00:00:00Z/t_2m:C,t_min_2m_24h:C,t_max_2m_24h:C,wind_gusts_10m_24h:ms,weather_symbol_24h:idx,uv:idx/{latitude},{longitude}/json")
+        fun getWeatherData(
+            @Path("date") date: String,
+            @Path("latitude") latitude: Double,
+            @Path("longitude") longitude: Double
+        ): Call<ResponseBody>
     }
+
 
     private fun createClient(): OkHttpClient {
         val interceptor = Interceptor { chain ->

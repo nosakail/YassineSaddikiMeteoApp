@@ -1,8 +1,10 @@
 package com.example.yassinesaddikimeteoapp.android
 
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +49,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 class MainActivity : ComponentActivity() {
@@ -71,31 +75,17 @@ class MainActivity : ComponentActivity() {
                             text = inputText,
                             onValueChange = { inputText = it }
                         )
-                        HandleButtonClick(inputText, scope)
+                        ButtonValider(
+                            context = LocalContext.current,
+                            city = inputText
+                        )
                     }
                 }
             }
         }
     }
 
-    @Composable
-    fun HandleButtonClick(inputText: String, scope: CoroutineScope) {
-        val context = LocalContext.current
-        ButtonValider(onClick = {
-            if (inputText.isNotEmpty()) {
-                scope.launch {
-                    val coordinates = fetchCoordinates(inputText)
-                    coordinates?.let { (latitude, longitude) ->
-                        val intent = Intent(context, LocalMeteoActivity::class.java)
-                        
-                        intent.putExtra("latitude", latitude)
-                        intent.putExtra("longitude", longitude)
-                        context.startActivity(intent)
-                    }
-                }
-            }
-        })
-    }
+
 
 
 //-------------------------------------------
@@ -188,12 +178,35 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun ButtonValider(onClick: () -> Unit) {
+    fun ButtonValider(context: Context, city: String) {
         Box(
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Button(
-                onClick = onClick,
+                onClick = {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val coordinates = fetchCoordinates(city)
+                        if (coordinates != null) {
+                            val date = Date()
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                            val formattedDate = dateFormat.format(date)
+                            val latitude = coordinates.first
+                            val longitude = coordinates.second
+
+                            val intent = Intent(context, LocalMeteoPage::class.java)
+
+
+                            intent.putExtra("latitude", latitude)
+                            intent.putExtra("longitude", longitude)
+                            intent.putExtra("date", formattedDate)
+
+                            context.startActivity(intent)
+                        } else {
+                            Toast.makeText(context, "Coordonnées introuvable, essayer avec une ville Française", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                },
                 modifier = Modifier.padding(start = 8.dp)
                     .size(150.dp, 50.dp), // Modification de la taille du bouton
                 shape = RoundedCornerShape(20.dp),
@@ -254,7 +267,8 @@ class MainActivity : ComponentActivity() {
         ) {
             Button(
                 onClick = onClick,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier
+                    .padding(start = 8.dp)
                     .size(150.dp, 50.dp), // Modification de la taille du bouton
                 shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(
