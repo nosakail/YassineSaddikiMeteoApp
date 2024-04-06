@@ -3,12 +3,26 @@ package com.example.yassinesaddikimeteoapp.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.*
@@ -67,14 +81,125 @@ class LocalMeteoPage : ComponentActivity() {
                     val longitude = intent.getDoubleExtra("longitude", 0.0)
                     val date = intent.getStringExtra("date")
 
-                    Column {
-                        currentTemperature?.let { Text(text = "Température actuelle: $it°C") }
-                        minTemperature?.let { Text(text = "Température minimale: $it°C") }
-                        maxTemperature?.let { Text(text = "Température maximale: $it°C") }
-                        windSpeed?.let { Text(text = "Vitesse du vent: $it m/s") }
-                        weatherSymbol?.let { Text(text = "Symbole météo: $it") }
-                        uvIndex?.let { Text(text = "Indice UV: $it") }
+                    Column(
+                        modifier = androidx.compose.ui.Modifier.fillMaxSize().padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        currentTemperature?.let { currentTemp ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowForward,
+                                    contentDescription = "Température actuelle",
+                                    modifier = androidx.compose.ui.Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = androidx.compose.ui.Modifier.padding(end = 8.dp))
+                                Text(
+                                    text = "Température actuelle: ${currentTemp}°C",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+
+                        minTemperature?.let { minTemp ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowDropDown,
+                                    contentDescription = "Température minimale",
+                                    modifier = androidx.compose.ui.Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = androidx.compose.ui.Modifier.padding(end = 8.dp))
+                                Text(
+                                    text = "Température minimale: ${minTemp}°C",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+
+                        maxTemperature?.let { maxTemp ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.KeyboardArrowUp,
+                                    contentDescription = "Température maximale",
+                                    modifier = androidx.compose.ui.Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = androidx.compose.ui.Modifier.padding(end = 8.dp))
+                                Text(
+                                    text = "Température maximale: ${maxTemp}°C",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+
+                        windSpeed?.let { wind ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = "Vitesse du vent",
+                                    modifier = androidx.compose.ui.Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = androidx.compose.ui.Modifier.padding(end = 8.dp))
+                                Text(
+                                    text = "Vitesse du vent: ${wind} m/s",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+
+                        weatherSymbol?.let { symbol ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                /*Icon(
+                                    imageVector = Icons.Filled.Search,
+                                    contentDescription = "Symbole météo",
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )*/
+                                Spacer(modifier = androidx.compose.ui.Modifier.padding(end = 8.dp))
+                                Text(
+                                    text = "Symbole météo: $symbol",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+
+                        uvIndex?.let { uv ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Settings,
+                                    contentDescription = "Indice UV ",
+                                    modifier = androidx.compose.ui.Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = androidx.compose.ui.Modifier.padding(end = 8.dp))
+                                Text(
+                                    text = "Indice UV : $uv",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
                     }
+
                 }
             }
         }
@@ -124,7 +249,7 @@ class LocalMeteoPage : ComponentActivity() {
     private fun createClient(): OkHttpClient {
         val interceptor = Interceptor { chain ->
             val request = chain.request().newBuilder()
-                .header("Authorization", Credentials.basic("iut_mesri_mohamed", "8A7gpU8H2i"))
+                .header("Authorization", Credentials.basic("nknkj_etre_kjnk", "jYY3dcT77O"))
                 .build()
             chain.proceed(request)
         }

@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,9 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -47,8 +46,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -74,10 +75,16 @@ class MainActivity : ComponentActivity() {
                 val scope = rememberCoroutineScope()
                 var inputText by remember { mutableStateOf("") }
 
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                Box(
+                    modifier = Modifier.fillMaxSize()
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.back), // Spécifiez le chemin de votre image
+                        contentDescription = null, // Mettez la description de contenu à null si l'image est purement décorative
+                        modifier = Modifier.fillMaxSize(), // Faire en sorte que l'image remplisse toute la taille de l'écran
+                        contentScale = ContentScale.FillBounds // Redimensionnez l'image pour qu'elle remplisse la boîte tout en préservant les proportions
+                    )
+
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -102,6 +109,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
 
 //-------------------------------------------
@@ -142,7 +150,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun Greeting(name: String, modifier: Modifier = Modifier) {
         Box(
-            modifier = Modifier.offset(y = (-200).dp),
+            modifier = Modifier.offset(y = (-70).dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -430,7 +438,7 @@ class MainActivity : ComponentActivity() {
                     .size(150.dp, 50.dp), // Modification de la taille du bouton
                 shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF55ABFA)
+                    containerColor = Color(0xFFE9AA30)
                 ),
             ) {
                 Text(
