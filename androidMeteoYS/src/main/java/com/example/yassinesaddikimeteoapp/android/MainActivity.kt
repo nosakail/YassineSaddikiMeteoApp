@@ -79,10 +79,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.back), // Spécifiez le chemin de votre image
-                        contentDescription = null, // Mettez la description de contenu à null si l'image est purement décorative
-                        modifier = Modifier.fillMaxSize(), // Faire en sorte que l'image remplisse toute la taille de l'écran
-                        contentScale = ContentScale.FillBounds // Redimensionnez l'image pour qu'elle remplisse la boîte tout en préservant les proportions
+                        painter = painterResource(id = R.drawable.back),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds 
                     )
 
                     Column(
