@@ -7,17 +7,21 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,8 +42,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
@@ -79,13 +86,15 @@ class MainActivity : ComponentActivity() {
                             context = LocalContext.current,
                             city = inputText
                         )
+                        CityInputField(
+                            context = LocalContext.current,
+                            city = inputText
+                        )
                     }
                 }
             }
         }
     }
-
-
 
 
 //-------------------------------------------
@@ -97,7 +106,7 @@ class MainActivity : ComponentActivity() {
             .url(url)
             .build()
 
-        withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             val client = OkHttpClient()
             val response = client.newCall(request).execute()
 
@@ -111,18 +120,15 @@ class MainActivity : ComponentActivity() {
                     val lon = jsonObject.getString("lon").toDouble()
                     return@withContext Pair(lat, lon)
                 } else {
-                    //TODO
+                    // Aucune coordonnée trouvée //TODO
+                    null
                 }
-
             } else {
-                //TODO
+                // Réponse non réussie  //TODO
+                null
             }
-
         }
-        return null
     }
-
-
 
 
     //-------------------------------------------
@@ -202,7 +208,11 @@ class MainActivity : ComponentActivity() {
 
                             context.startActivity(intent)
                         } else {
-                            Toast.makeText(context, "Coordonnées introuvable, essayer avec une ville Française", Toast.LENGTH_SHORT)
+                            Toast.makeText(
+                                context,
+                                "Coordonnées introuvable, essayer avec une ville Française",
+                                Toast.LENGTH_SHORT
+                            )
                                 .show()
                         }
                     }
@@ -226,66 +236,99 @@ class MainActivity : ComponentActivity() {
 
 //---------------------------------------------------------------------------------------//
 
-    @OptIn(ExperimentalMaterial3Api::class)
+
     @Composable
-    fun InputFieldPrerer(
-        text: String,
-        onValueChange: (String) -> Unit
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(end = 16.dp)
+    fun CityInputField(context: Context, city: String) {
+        val focusManager = LocalFocusManager.current
+        val cityInput = remember { mutableStateOf("") }
+        val cityList = remember { mutableStateOf(listOf<String>()) }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(
-                imageVector = Icons.Filled.Favorite,
-                contentDescription = "Search",
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .size(24.dp)
-            )
             OutlinedTextField(
-                value = text,
-                onValueChange = onValueChange,
-                label = { Text("Entrez vos villes preferées...") },
-                shape = RoundedCornerShape(20.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = Color(0xFFD9D9D9), // Définir la couleur de fond de l'input
-                    cursorColor = Color.Black, // Définir la couleur du curseur
-                    focusedBorderColor = Color.Black, // Définir la couleur du contour lorsqu'il est sélectionné
-                    unfocusedBorderColor = Color.Black // Définir la couleur du contour lorsqu'il n'est pas sélectionné
+                value = cityInput.value,
+                onValueChange = { cityInput.value = it },
+                label = { Text("Entrer une ville préférée") },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
                 ),
-                textStyle = TextStyle(fontSize = 16.sp) // Définir la taille de la police du texte
-            )
-        }
-    }
-
-
-    @Composable
-    fun ButtonValiderPreferer(onClick: () -> Unit) {
-        Box(
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Button(
-                onClick = onClick,
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .size(150.dp, 50.dp), // Modification de la taille du bouton
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xE93030)
-                ),
-            ) {
-                Text(
-                    text = "VALIDER",
-                    color = Color.White,
-                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        if (cityInput.value.isNotBlank()) {
+                            cityList.value = cityList.value + cityInput.value
+                            cityInput.value = ""
+                        }
+                    }
                 )
+            )
+            Button(
+                onClick = {
+                    if (cityInput.value.isNotBlank()) {
+                        cityList.value = cityList.value + cityInput.value
+                        cityInput.value = ""
+                        focusManager.clearFocus()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Valider")
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                cityList.value.take(5).forEach { city ->
+                    Button(
+                        onClick = {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                val coordinates = fetchCoordinates(city)
+                                if (coordinates != null) {
+                                    val date = Date()
+                                    val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                                    val formattedDate = dateFormat.format(date)
+                                    val latitude = coordinates.first
+                                    val longitude = coordinates.second
+
+                                    val intent = Intent(context, LocalMeteoPage::class.java)
+
+
+                                    intent.putExtra("latitude", latitude)
+                                    intent.putExtra("longitude", longitude)
+                                    intent.putExtra("date", formattedDate)
+
+                                    context.startActivity(intent)
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Coordonnées introuvable, essayer avec une ville Française",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                            }
+                        },
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    ) {
+                        Text(
+                            text = city,
+                            color = Color.White,
+                        )
+                    }
+                }
             }
         }
     }
 }
-
-
 
 
 
