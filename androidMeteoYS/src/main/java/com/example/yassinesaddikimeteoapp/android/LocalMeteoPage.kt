@@ -3,7 +3,9 @@ package com.example.yassinesaddikimeteoapp.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +24,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -85,6 +90,8 @@ class LocalMeteoPage : ComponentActivity() {
                         modifier = androidx.compose.ui.Modifier.fillMaxSize().padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+                        //LocalMeteoPageBackground(weatherSymbol)
+
                         currentTemperature?.let { currentTemp ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
@@ -204,6 +211,69 @@ class LocalMeteoPage : ComponentActivity() {
             }
         }
     }
+
+
+
+    @Composable
+    fun LocalMeteoPageBackground(symbol: Int?) {
+        val context = LocalContext.current
+        Box(
+            modifier = androidx.compose.ui.Modifier.fillMaxSize()
+        ) {
+            when (symbol) {
+                1, 2 -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.soleil),
+                        contentDescription = null,
+                        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
+                3, 4, 11, 12, 13 -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.soleilnuage),
+                        contentDescription = null,
+                        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
+                5, 15 -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.pluie),
+                        contentDescription = null,
+                        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
+                14 -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.orage),
+                        contentDescription = null,
+                        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
+                16 -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.sabletempete),
+                        contentDescription = null,
+                        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
+                else -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.ville),
+                        contentDescription = null,
+                        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
+            }
+        }
+    }
+
+
 
     private suspend fun fetchWeatherData(date: String, latitude: Double, longitude: Double): JSONObject? {
         return withContext(Dispatchers.IO) {
